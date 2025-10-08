@@ -5,16 +5,4 @@
 /dist
 
 # misc
-.DS_Store
-.env.local
-.env.*.local
-
-# logs
-*.log
-
-# IDE
-.idea/
-.vscode/
-
-# Vite
-.vite/
+.env
