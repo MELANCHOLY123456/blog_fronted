@@ -57,13 +57,14 @@ export default {
     padding: 1.5rem;
     border-radius: 14px;
     border: 1px solid var(--border-color);
-    margin-left: 2rem;
     box-shadow: 0 4px 16px var(--shadow-color, rgba(60, 100, 180, 0.07));
     width: 250px;
     /* 新增吸顶效果 */
     position: sticky;
     top: 32px; /* 距离页面顶部的距离，可根据你的布局微调 */
     align-self: flex-start; /* 保证与右侧顶部对齐 */
+    margin: 0;
+    margin-right: 2rem;
 }
 
 .sidebar-title {
