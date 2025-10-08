@@ -87,7 +87,9 @@ export const processArticlesData = (articles) => {
     
     return {
       ...article,
-      categories: categories
+      categories: categories,
+      // 添加默认头像字段
+      avatar: null
     };
   });
 };

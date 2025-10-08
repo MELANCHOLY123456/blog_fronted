@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import Header from './components/main-page/Header.vue';
-import Aside from './components/main-page/Aside.vue';
-import NavBar from './components/main-page/NavBar.vue';
+import Header from '@/layouts/Header.vue';
+import Aside from '@/layouts/Aside.vue';
+import NavBar from '@/layouts/NavBar.vue';
 
 export default {
   components: {

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import About from '@/components/Home.vue'; // 你的自我介绍页
+import Home from '@/views/Home.vue'; // 你的自我介绍页
 import Main from '@/components/main-page/Main.vue';
 import ArticleDetail from '@/components/main-page/ArticleDetail.vue';
 import CategoryArticles from '@/components/main-page/CategoryArticles.vue';
@@ -11,8 +11,8 @@ const routes = [
     },
     {
         path: '/about',
-        name: 'About',
-        component: About
+        name: 'Home',
+        component: Home
     },
     {
         path: '/articles',

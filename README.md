@@ -19,13 +19,16 @@ src/
 ├── assets/           # 静态资源文件
 │   ├── pic/          # 图片资源
 │   └── style/        # 全局样式
-├── components/       # 组件目录
+├── components/       # 可复用组件
 │   ├── common/       # 通用组件
 │   └── main-page/    # 主页面组件
+├── layouts/          # 布局组件
+├── views/            # 页面级组件
 ├── router/           # 路由配置
 ├── services/         # API服务层
 ├── utils/            # 工具函数
-└── App.vue           # 根组件
+├── App.vue           # 根组件
+└── main.js           # 入口文件
 ```
 
 ## 克隆和运行项目

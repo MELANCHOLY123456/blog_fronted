@@ -44,7 +44,7 @@ export default {
         },
         avatar: {
             type: String,
-            default: melancholy
+            default: null
         }
     },
     computed: {
@@ -53,7 +53,8 @@ export default {
             return date.toLocaleString();
         },
         avatarImg() {
-            return this.avatar;
+            // 如果avatar为null或未提供，则使用默认头像
+            return this.avatar || melancholy;
         }
     }
 };
