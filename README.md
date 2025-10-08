@@ -65,17 +65,7 @@ npm run dev
 
 默认访问地址: http://localhost:5173
 
-### 5. 代码检查和格式化
-
-```bash
-# 检查代码质量
-npm run lint
-
-# 格式化代码
-npm run format
-```
-
-### 6. 构建生产版本
+### 5. 构建生产版本
 
 ```bash
 npm run build
@@ -91,13 +81,6 @@ npm run build
 4. 文章详情查看
 5. 分类文章筛选
 6. 回到顶部功能
-
-## 代码规范
-
-1. 使用ESLint进行代码检查
-2. 遵循Vue.js风格指南
-3. 组件命名使用PascalCase
-4. 使用CSS变量管理主题样式
 
 ## API服务层
 
