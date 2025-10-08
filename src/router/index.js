@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '@/views/Home.vue'; // 你的自我介绍页
+import Home from '@/views/Home.vue';
 import Main from '@/components/main-page/Main.vue';
 import ArticleDetail from '@/components/main-page/ArticleDetail.vue';
 import CategoryArticles from '@/components/main-page/CategoryArticles.vue';
 
+/**
+ * 应用路由配置
+ */
 const routes = [
     {
         path: '/',
@@ -33,6 +36,7 @@ const routes = [
     }
 ];
 
+// 创建路由实例
 const router = createRouter({
     history: createWebHistory(),
     routes

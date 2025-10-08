@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// 从环境变量获取API基础URL，如果没有则使用默认值
+// API基础URL配置
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 // 创建axios实例
@@ -15,7 +15,7 @@ const apiClient = axios.create({
 // 请求拦截器
 apiClient.interceptors.request.use(
   (config) => {
-    // 可以在这里添加认证token等
+    // 可添加认证token等
     return config;
   },
   (error) => {
@@ -34,12 +34,12 @@ apiClient.interceptors.response.use(
 );
 
 /**
- * 文章相关API
+ * 文章相关API服务
  */
 export const articleService = {
   /**
    * 获取所有文章（包含分类信息）
-   * @returns {Promise}
+   * @returns {Promise} 包含文章列表的Promise
    */
   getArticlesWithCategories() {
     return apiClient.get('/api/categories/articles-with-categories');
@@ -48,7 +48,7 @@ export const articleService = {
   /**
    * 根据ID获取文章详情
    * @param {number|string} id - 文章ID
-   * @returns {Promise}
+   * @returns {Promise} 包含文章详情的Promise
    */
   getArticleById(id) {
     return apiClient.get(`/api/articles/${id}`);
@@ -56,12 +56,12 @@ export const articleService = {
 };
 
 /**
- * 分类相关API
+ * 分类相关API服务
  */
 export const categoryService = {
   /**
    * 获取所有分类
-   * @returns {Promise}
+   * @returns {Promise} 包含分类列表的Promise
    */
   getCategories() {
     return apiClient.get('/api/categories');
@@ -70,7 +70,7 @@ export const categoryService = {
   /**
    * 根据分类名称获取文章
    * @param {string} categoryName - 分类名称
-   * @returns {Promise}
+   * @returns {Promise} 包含文章列表的Promise
    */
   getArticlesByCategory(categoryName) {
     return apiClient.get(`/api/categories/${encodeURIComponent(categoryName)}/articles`);

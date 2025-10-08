@@ -45,14 +45,18 @@ export default {
     };
   },
   computed: {
+    /**
+     * 控制侧边栏显示条件
+     * @returns {boolean} 是否显示侧边栏
+     */
     showAside() {
-      // 只在文章相关页面显示侧边栏
       return this.$route.path.startsWith('/articles') ||
              this.$route.path.startsWith('/article/') ||
              this.$route.path.startsWith('/category/');
     }
   },
   mounted() {
+    // 初始化主题设置
     const theme = localStorage.getItem('theme');
     if (theme === 'dark') {
       this.isDark = true;
@@ -62,26 +66,34 @@ export default {
       document.documentElement.setAttribute('data-theme', '');
     }
 
-    // 动态标题逻辑 - 从环境变量获取标题
+    // 设置页面标题
     const appTitle = import.meta.env.VITE_APP_TITLE || this.defaultTitle;
     document.title = appTitle;
     this.defaultTitle = appTitle;
+    
+    // 绑定事件监听器
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
-
-    // 回到顶部按钮显示逻辑
     window.addEventListener('scroll', this.handleScroll);
   },
   beforeUnmount() {
+    // 清理事件监听器
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     window.removeEventListener('scroll', this.handleScroll);
     if (this.titleTimer) clearTimeout(this.titleTimer);
   },
   methods: {
+    /**
+     * 切换主题模式
+     */
     toggleTheme() {
       this.isDark = !this.isDark;
       document.documentElement.setAttribute('data-theme', this.isDark ? 'dark' : '');
       localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
     },
+    
+    /**
+     * 处理页面可见性变化
+     */
     handleVisibilityChange() {
       if (this.titleTimer) clearTimeout(this.titleTimer);
       if (document.hidden) {
@@ -93,9 +105,17 @@ export default {
         }, 1500);
       }
     },
+    
+    /**
+     * 处理滚动事件
+     */
     handleScroll() {
       this.showBackTop = window.scrollY > 200;
     },
+    
+    /**
+     * 滚动到页面顶部
+     */
     scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

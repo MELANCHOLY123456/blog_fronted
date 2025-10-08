@@ -3,7 +3,7 @@
  */
 
 /**
- * 处理API错误
+ * 处理API错误响应
  * @param {Error} error - 错误对象
  * @param {string} defaultMessage - 默认错误消息
  * @returns {string} 格式化后的错误消息
@@ -43,7 +43,7 @@ export const handleApiError = (error, defaultMessage = '操作失败') => {
  * @param {string} type - 消息类型 (error, warning, info, success)
  */
 export const showMessage = (message, type = 'error') => {
-  // 在开发环境输出错误信息到控制台
+  // 开发环境输出错误信息到控制台
   if (import.meta.env.DEV) {
     if (type === 'error') {
       console.error('[API Error]', message);
@@ -52,15 +52,12 @@ export const showMessage = (message, type = 'error') => {
     }
   }
   
-  // 如果有Element UI或其他UI库，可以在这里调用其消息组件
+  // 可集成UI库的消息组件
   // 例如: this.$message({ message, type });
-  
-  // 简单的浏览器原生提示（仅用于演示）
-  // alert(`${type.toUpperCase()}: ${message}`);
 };
 
 /**
- * 处理文章数据
+ * 处理文章数据格式
  * @param {Array} articles - 原始文章数据
  * @returns {Array} 处理后的文章数据
  */
@@ -88,7 +85,6 @@ export const processArticlesData = (articles) => {
     return {
       ...article,
       categories: categories,
-      // 添加默认头像字段
       avatar: null
     };
   });
