@@ -3,6 +3,7 @@
         <h3 class="sidebar-title">📚 文章分类</h3>
         <ul class="category-list">
             <li v-for="(category, index) in categories" :key="index" class="category-item"
+                :class="{ 'active': isCategoryActive(category.name) }"
                 @click="goToCategory(category.name)">
                 {{ category.name }}
             </li>
@@ -24,7 +25,19 @@ export default {
     async created() {
         await this.loadCategories();
     },
+    computed: {
+        currentCategory() {
+            // 从路由中提取当前分类名称
+            if (this.$route.name === 'CategoryArticles') {
+                return decodeURIComponent(this.$route.params.name);
+            }
+            return null;
+        }
+    },
     methods: {
+        isCategoryActive(categoryName) {
+            return this.currentCategory === categoryName;
+        },
         async loadCategories() {
             try {
                 const response = await categoryService.getCategories();
@@ -58,13 +71,12 @@ export default {
     border-radius: 14px;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 16px var(--shadow-color, rgba(60, 100, 180, 0.07));
-    width: 250px;
+    width: 220px;
     /* 新增吸顶效果 */
     position: sticky;
     top: 32px; /* 距离页面顶部的距离，可根据你的布局微调 */
     align-self: flex-start; /* 保证与右侧顶部对齐 */
-    margin: 0;
-    margin-right: 2rem;
+    margin: 0 3rem 0 0;
 }
 
 .sidebar-title {
@@ -120,7 +132,8 @@ export default {
     z-index: 0;
 }
 
-.category-item:hover {
+.category-item:hover,
+.category-item.active {
     background: var(--hover-bg);
     color: var(--primary-color);
     border: 1.5px solid var(--primary-color);
@@ -128,7 +141,8 @@ export default {
     transform: scale(1.035);
 }
 
-.category-item:hover::before {
+.category-item:hover::before,
+.category-item.active::before {
     width: 6px;
 }
 </style>

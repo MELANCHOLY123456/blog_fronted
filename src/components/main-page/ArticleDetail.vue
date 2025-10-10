@@ -1,12 +1,14 @@
 <template>
-    <div class="article-detail">
-        <h1 class="article-title">{{ article.title }}</h1>
-        <p class="article-meta"><strong>Author:</strong> {{ article.author }}</p>
-        <p class="article-meta"><strong>Upload Time:</strong> {{ formattedUploadTime }}</p>
-        <div class="article-content">
-            <p>{{ article.content }}</p>
+    <div class="article-container">
+        <div class="article-detail">
+            <h1 class="article-title">{{ article.title }}</h1>
+            <p class="article-meta"><strong>Author:</strong> {{ article.author }}</p>
+            <p class="article-meta"><strong>Upload Time:</strong> {{ formattedUploadTime }}</p>
+            <div class="article-content">
+                <p>{{ article.content }}</p>
+            </div>
         </div>
-        <button class="back-button" @click="goBack">Back to Home</button>
+        <button class="back-button" @click="goBack">Back to {{ backPageName }}</button>
     </div>
 </template>
 
@@ -32,6 +34,14 @@
                 if (!this.article.upload_time) return '';
                 const date = new Date(this.article.upload_time);
                 return date.toLocaleString();
+            },
+            backPageName() {
+                // 根据来源页面确定返回按钮显示的文本
+                if (this.$route.query.from === 'category') {
+                    return 'Category';
+                } else {
+                    return 'Home';
+                }
             }
         },
         async created() {
@@ -45,6 +55,8 @@
                 }
                 return;
             }
+            
+            // 不再需要存储来源信息，直接在需要时检查$route.query.from
             
             await this.loadArticle(id);
         },
@@ -69,23 +81,35 @@
                 }
             },
             goBack() {
-                this.$router.push('/articles');
+                // 根据来源页面返回到相应的页面
+                if (this.$route.query.from === 'category') {
+                    // 从分类页面进入，通过路由历史返回上一页
+                    this.$router.go(-1);
+                } else {
+                    // 从主文章页面进入，返回到主文章页面
+                    this.$router.push('/articles');
+                }
             }
         }
     };
 </script>
 
 <style scoped>
-    .article-detail {
-        padding: 20px;
-        background-color: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(60, 100, 180, 0.07), 0 1.5px 4px rgba(0, 0, 0, 0.03);
-        color: var(--text-color);
-        line-height: 1.6;
+    .article-container {
         display: flex;
         flex-direction: column;
+        align-items: center;
+    }
+
+    .article-detail {
+        padding: 1.5rem;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        box-shadow: 0 4px 16px var(--shadow-color, rgba(60, 100, 180, 0.07));
+        color: var(--text-color);
+        line-height: 1.6;
+        margin-bottom: 1rem;
     }
 
     .article-title {
@@ -116,12 +140,12 @@
         padding: 10px 20px;
         cursor: pointer;
         transition: background 0.2s;
-        align-self: center;
-        margin-top: 2rem;
+        display: block;
+        margin: 1rem 0;
     }
 
     .back-button:hover {
-        background: var(--accent-color);
+        background: var(--card-bg);
         color: var(--text-color);
     }
 </style>

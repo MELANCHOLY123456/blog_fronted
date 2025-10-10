@@ -33,7 +33,7 @@ const routes = [
         path: '/category/:name',
         name: 'CategoryArticles',
         component: CategoryArticles,
-        props: true
+        props: route => ({ name: decodeURIComponent(route.params.name) })
     },
     {
         path: '/article/create',

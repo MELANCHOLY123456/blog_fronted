@@ -49,7 +49,10 @@ export default {
             }
         },
         goToDetail(id) {
-            this.$router.push(`/article/${id}`);
+            this.$router.push({
+                path: `/article/${id}`,
+                query: { from: 'articles' }
+            });
         },
         // 新增方法：跳转到分类页面
         goToCategory(categoryName) {

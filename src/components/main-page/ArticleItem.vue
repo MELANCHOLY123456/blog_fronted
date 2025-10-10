@@ -1,5 +1,5 @@
 <template>
-    <div class="article" @click="$emit('click')">
+    <div class="article" @click="$emit('click', id)">
         <div class="article-body">
             <div class="article-meta">
                 <div class="article-meta-left">
@@ -11,7 +11,7 @@
                 <span class="article-time">{{ formattedUploadTime }}</span>
             </div>
             <h3 class="article-title">
-                <router-link :to="`/article/${id}`">{{ title }}</router-link>
+                {{ title }}
             </h3>
             <p class="article-content">{{ content }}</p> 
         </div>
@@ -119,12 +119,7 @@
         margin: 0 0 0.2rem 0;
         letter-spacing: 0.5px;
         line-height: 1.4;
-    }
-
-    .article-title a,
-    .article-title .router-link {
         color: var(--text-color);
-        font-weight: 800;
         font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
         text-decoration: underline;
         text-underline-offset: 3px;
@@ -132,8 +127,8 @@
         transition: color 0.2s, text-decoration-color 0.2s, text-decoration-thickness 0.2s;
         cursor: pointer;
     }
-    .article-title a:hover,
-    .article-title .router-link:hover {
+    
+    .article-title:hover {
         color: var(--primary-color);
         text-decoration-color: var(--primary-color);
         text-decoration-thickness: 3px;

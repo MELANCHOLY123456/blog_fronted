@@ -1,6 +1,5 @@
 <template>
     <div class="category-articles">
-        <h2 class="category-title">分类: {{ categoryName }}</h2>
         <ArticleList 
             :articles="filteredArticles" 
             @article-click="goToDetail" 
@@ -46,23 +45,25 @@
                         return false;
                     }
 
-                    return article.categories.some(cat =>
+                    // 过滤掉null值
+                    const validCategories = article.categories.filter(cat => cat !== null);
+                    
+                    return validCategories.some(cat =>
                         cat.toString().toLowerCase() === this.categoryName.toLowerCase()
                     );
                 });
             }
         },
         async created() {
-            this.categoryName = this.name || this.$route.params.name;
+            // 现在通过props传递的name已经是解码后的值
+            this.categoryName = this.name;
             await this.loadArticles();
         },
         watch: {
             name(newVal) {
                 this.categoryName = newVal;
-            },
-            '$route.params.name'(newVal) {
-                this.categoryName = newVal;
             }
+            // 不再需要监听$route.params.name，因为我们通过props传递解码后的值
         },
         methods: {
             async loadArticles() {
@@ -86,7 +87,12 @@
                 }
             },
             goToDetail(id) {
-                this.$router.push(`/article/${id}`);
+                this.$router.push({
+                    path: `/article/${id}`,
+                    query: { 
+                        from: 'category'
+                    }
+                });
             },
             goBack() {
                 this.$router.push('/articles');
@@ -110,7 +116,7 @@
     }
 
     .back-button:hover {
-        background: var(--accent-color);
+        background: var(--card-bg);
         color: var(--text-color);
     }
 </style>

@@ -2,11 +2,17 @@
     <nav class="navbar">
         <ul>
             <li><router-link to="/about">关于我</router-link></li>
-            <li><router-link to="/articles">文章页</router-link></li>
+            <li>
+                <router-link 
+                    to="/articles" 
+                    :class="{ 'router-link-active': isArticlesActive }"
+                >
+                    文章页
+                </router-link>
+            </li>
             <li>
                 <router-link to="/article/create" class="create-link">
-                    <font-awesome-icon :icon="['fas', 'plus']" />
-                    创建文章
+                    写文章
                 </router-link>
             </li>
         </ul>
@@ -14,7 +20,18 @@
 </template>
 
 <script>
-    export default {};
+    export default {
+        computed: {
+            isArticlesActive() {
+                // 检查当前路由是否与文章相关的路径匹配
+                // 排除创建文章页面
+                return (this.$route.path === '/articles' || 
+                       this.$route.path.startsWith('/article/') || 
+                       this.$route.path.startsWith('/category/')) &&
+                       !this.$route.path.startsWith('/article/create');
+            }
+        }
+    };
 </script>
 
 <style scoped>

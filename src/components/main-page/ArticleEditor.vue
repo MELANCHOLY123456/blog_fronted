@@ -1,7 +1,7 @@
 <template>
     <div class="article-editor">
-        <div class="editor-wrapper">
-            <form @submit.prevent="saveArticle" class="editor-form">
+        <form @submit.prevent="saveArticle" class="editor-form">
+            <div class="editor-body">
                 <div class="form-group">
                     <label for="title">标题:</label>
                     <input 
@@ -26,13 +26,22 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="publishDate">发布日期:</label>
-                    <input 
-                        type="date" 
-                        id="publishDate" 
-                        v-model="articleData.publish_date" 
+                    <label for="category">分类:</label>
+                    <select 
+                        id="category" 
+                        v-model="articleData.category" 
                         class="form-input"
-                    />
+                        required
+                    >
+                        <option value="">请选择分类</option>
+                        <option 
+                            v-for="category in categories" 
+                            :key="category.name" 
+                            :value="category.name"
+                        >
+                            {{ category.name }}
+                        </option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -47,6 +56,14 @@
                     ></textarea>
                 </div>
                 
+                <!-- 成功提示信息 -->
+                <div v-if="showSuccessMessage" class="success-message">
+                    <div class="success-animation">
+                        <span class="success-icon">✓</span>
+                        <span class="success-text">文章保存成功！</span>
+                    </div>
+                </div>
+                
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
                         {{ isSubmitting ? '保存中...' : '保存文章' }}
@@ -55,13 +72,13 @@
                         取消
                     </button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </template>
 
 <script>
-    import { articleService } from '@/services/api';
+    import { articleService, categoryService } from '@/services/api';
     import { handleApiError } from '@/utils/errorHandler';
 
     export default {
@@ -76,11 +93,13 @@
         data() {
             return {
                 isSubmitting: false,
+                showSuccessMessage: false,
+                categories: [],
                 articleData: {
                     title: '',
                     content: '',
                     author: '',
-                    publish_date: this.getCurrentDate()
+                    category: ''
                 }
             };
         },
@@ -94,6 +113,9 @@
             }
         },
         async created() {
+            // 加载分类列表
+            await this.loadCategories();
+            
             // 如果是编辑模式，获取文章详情
             if (this.isEditing) {
                 await this.loadArticle();
@@ -101,12 +123,20 @@
         },
         methods: {
             /**
-             * 获取当前日期字符串
-             * @returns {string} YYYY-MM-DD格式的日期
+             * 加载分类列表
              */
-            getCurrentDate() {
-                const today = new Date();
-                return today.toISOString().split('T')[0];
+            async loadCategories() {
+                try {
+                    const response = await categoryService.getCategories();
+                    if (response.data.status === 'success') {
+                        this.categories = response.data.data;
+                    } else {
+                        throw new Error(response.data.message || '获取分类失败');
+                    }
+                } catch (error) {
+                    const errorMessage = handleApiError(error, '获取分类失败');
+                    console.error('Error loading categories:', errorMessage);
+                }
             },
             
             /**
@@ -119,9 +149,9 @@
                         // 填充表单数据
                         this.articleData = {
                             ...response.data.data,
-                            publish_date: response.data.data.publish_date 
-                                ? response.data.data.publish_date.split('T')[0] 
-                                : this.getCurrentDate()
+                            category: response.data.data.categories && response.data.data.categories.length > 0 
+                                ? response.data.data.categories[0] 
+                                : ''
                         };
                     } else {
                         throw new Error(response.data.message || '获取文章失败');
@@ -140,18 +170,35 @@
             async saveArticle() {
                 this.isSubmitting = true;
                 try {
+                    // 准备文章数据
+                    const articleData = {
+                        ...this.articleData,
+                        // 使用当前时间作为发布日期
+                        publish_date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                        // 将分类转换为数组格式
+                        categories: this.articleData.category ? [this.articleData.category] : []
+                    };
+                    
+                    // 删除临时的category字段
+                    delete articleData.category;
+                    
                     let response;
                     if (this.isEditing) {
                         // 更新文章
-                        response = await articleService.updateArticle(this.articleId, this.articleData);
+                        response = await articleService.updateArticle(this.articleId, articleData);
                     } else {
                         // 创建文章
-                        response = await articleService.createArticle(this.articleData);
+                        response = await articleService.createArticle(articleData);
                     }
                     
                     if (response.data.status === 'success') {
-                        // 保存成功，返回文章列表页
-                        this.$router.push('/articles');
+                        // 保存成功，显示提示信息
+                        this.showSuccessMessage = true;
+                        // 3秒后自动隐藏提示并跳转到文章列表页
+                        setTimeout(() => {
+                            this.showSuccessMessage = false;
+                            this.$router.push('/articles');
+                        }, 3000);
                     } else {
                         throw new Error(response.data.message || '保存文章失败');
                     }
@@ -175,34 +222,42 @@
 
 <style scoped>
     .article-editor {
-        flex: 1;
-        min-width: 0;
-        padding-left: 2rem;
-    }
-
-    .editor-wrapper {
-        max-width: 800px;
-        margin: 0 auto;
+        width: 100%;
     }
 
     .editor-form {
+        display: flex;
+        flex-direction: column;
         background: var(--card-bg);
-        padding: 2rem;
         border-radius: 14px;
         box-shadow: 0 4px 16px rgba(60, 100, 180, 0.07), 0 1.5px 4px rgba(0,0,0,0.03);
         border: 1px solid var(--border-color);
-        margin-top: 0;
+        margin-bottom: 24px;
+        transition: box-shadow 0.2s, transform 0.2s;
+        width: 100%;
+        color: var(--text-color);
+        border: 1.5px solid var(--border-color);
+        transition: box-shadow 0.2s, transform 0.2s, border 0.2s;
+        box-sizing: border-box;
+    }
+
+    .editor-body {
+        padding: 1.5rem 2rem 1.2rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
     }
 
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.7rem;
     }
 
     .form-group label {
         display: block;
         margin-bottom: 0.5rem;
-        font-weight: bold;
+        font-weight: 500;
         color: var(--text-color);
+        font-size: 0.95rem;
     }
 
     .form-input,
@@ -221,6 +276,49 @@
     .form-textarea {
         resize: vertical;
         min-height: 200px;
+    }
+
+    .success-message {
+        padding: 1rem;
+        margin: 1rem 0;
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 6px;
+        color: #155724;
+        text-align: center;
+        animation: fadeInOut 3s ease-in-out;
+    }
+
+    .success-animation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .success-icon {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #28a745;
+        animation: bounce 0.5s ease-in-out;
+    }
+
+    .success-text {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-10px); }
+        10% { opacity: 1; transform: translateY(0); }
+        90% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-10px); }
+    }
+
+    @keyframes bounce {
+        0% { transform: scale(0.5); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
     }
 
     .form-actions {

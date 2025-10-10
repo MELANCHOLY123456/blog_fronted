@@ -11,6 +11,12 @@
             <Aside v-if="showAside" class="sidebar" />
             <router-view class="articles" />
         </div>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p>© {{ currentYear }} 眸冷但骨不累. All rights reserved.</p>
+                <p>Powered by Vue.js & Node.js</p>
+            </div>
+        </footer>
         <!-- 回到顶部按钮 -->
         <button
             v-show="showBackTop"
@@ -41,7 +47,8 @@
                 isDark: false,
                 titleTimer: null,
                 defaultTitle: '眸冷但骨不累',
-                showBackTop: false
+                showBackTop: false,
+                currentYear: new Date().getFullYear()
             };
         },
         computed: {
@@ -128,6 +135,7 @@
         display: flex;
         flex-direction: row;
         align-items: flex-start;
+        justify-content: center;
         width: 100%;
         max-width: 1200px;
         margin: 32px auto 0 auto;
@@ -136,14 +144,16 @@
         padding: 0 2rem;
     }
     .sidebar {
-        width: 260px;
+        width: 250px;
         min-width: 200px;
-        margin-right: 2rem;
+        margin-right: 3rem;
+        position: sticky;
+        top: 32px;
+        align-self: flex-start;
     }
     .articles {
         flex: 1;
         min-width: 0;
-        padding-left: 2rem;
     }
 
     /* 主题切换开关样式 */
@@ -211,6 +221,43 @@
     }
     .back-to-top:active {
         transform: scale(0.96);
+    }
+
+    /* 页脚样式 */
+    .site-footer {
+        color: var(--text-color);
+        padding: 1.5rem 2rem;
+        margin-top: 2rem;
+        text-align: center;
+        width: 100%;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+    }
+
+    .footer-content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    
+    .footer-content p {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+        color: var(--meta-color);
+    }
+
+    /* 响应式页脚 */
+    @media (max-width: 768px) {
+        .site-footer {
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .footer-content p {
+            font-size: 0.8rem;
+        }
     }
 
     body, #app {
